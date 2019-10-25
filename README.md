@@ -1,7 +1,7 @@
 # DPEtoCSV
 
 Procédure d'exploitation pour windows.
-
+-2) Installer notepad++ https://notepad-plus-plus.org/downloads
 -1) Installer git (https://git-scm.com/download/win)
 
 0) Installer python2.X (dans le dossier utilities ou bien sur le site https://www.python.org/downloads/ )
