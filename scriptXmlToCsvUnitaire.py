@@ -3,7 +3,7 @@
 from lxml import etree
 import os
 from lxml import etree
-
+import datetime
 
 #
 #Cette fonction va scanner un répertoire contenant des XML a aggreger dans un seul CSV
@@ -64,7 +64,7 @@ def generateOneCsvLineFromOneXML(nameOfFile):
     global enteteEcrite
 
 
-    nom_fichier="T783L_resultat_01_01_01_000.xml"
+    #nom_fichier="T783L_resultat_01_01_01_000.xml"
     tree = etree.parse("fichier_xml/"+nameOfFile)
     ligne_fichier_resultat=[nameOfFile]
 
@@ -352,7 +352,7 @@ def generateOneCsvLineFromOneXML(nameOfFile):
     #FIN                                remplissage du bloc bleu: RESULTAT/LETTRE/VALEUR
     ######################################################################################################################
 
-    nomFichierOutputPSV=nameOfFile+"_OUTPUT.psv"
+    nomFichierOutputPSV=datetime.datetime.today().strftime('%Y-%m-%d') + '/' + nameOfFile+"_OUTPUT.psv"
     with open(nomFichierOutputPSV, 'wb') as f:
         writer = csv.writer(f, dialect='excel')
         ligne = ''
@@ -371,7 +371,7 @@ def generateOneCsvLineFromOneXML(nameOfFile):
         ligne=ligne.encode('UTF-8')
         writer.writerow([ligne, ])
 
-    nomFichierOutput=nameOfFile+"_OUTPUT.csv"
+    nomFichierOutput=datetime.datetime.today().strftime('%Y-%m-%d') + '/' + nameOfFile+"_OUTPUT.csv"
     with open(nomFichierOutput, 'wb') as f:
         writer = csv.writer(f, dialect='excel')
         ligne = ''
@@ -401,7 +401,7 @@ def generateOneCsvLineFromOneXML(nameOfFile):
     #exit(0)
 
     #ICI on ecrit le fichier mergé, la premiere occurence on ecrit l'entete
-    nomFichierOutputGlobal = "globalFichierMerge.csv"
+    nomFichierOutputGlobal = datetime.datetime.today().strftime('%Y-%m-%d') + '/' + "globalFichierMerge.csv"
     if enteteEcrite<1:
         with open(nomFichierOutputGlobal, 'wb') as fileMerged:
             # on ecrit tout
@@ -464,6 +464,12 @@ calculTailleColonneMax('fichier_xml')
 print 'mur=' + str(nbMurMax)
 print 'menuiserie=' + str(nbMenuiserieMax)
 print 'plancher=' + str(nbPlancherMax)
+
+#ici on crée le dossier qui va recevoir les fichiers générés
+if os.path.isdir(datetime.datetime.today().strftime('%Y-%m-%d') ):
+    print "dossier existe deja"
+else:
+    os.mkdir(datetime.datetime.today().strftime('%Y-%m-%d') , 0755)
 
 # ici on ouvre le fichier global de resultat
 # on initialise un booleen pour n'ecrire qu'une entete de colonne
