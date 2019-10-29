@@ -97,11 +97,18 @@ def generateOneCsvLineFromOneXML(nameOfFile):
     for Resume_DPE in tree.xpath("/Projet/Batiment/Zone/Logement/Etat/Resume_DPE"):
         ligne_fichier_resultat.append(Resume_DPE.findtext("Lettre_energie"))
         ligne_fichier_resultat.append(Resume_DPE.findtext("Valeur_energie"))
-        ligne_fichier_resultat.append("Chauffage(kWh?")
-        ligne_fichier_resultat.append("ECS(kWh?")
+    for item in tree.xpath("/Projet/Batiment/Zone/Logement/Etat/Conso/Chauffage"):
+        ligne_fichier_resultat.append(item.findtext("Total_EP"))
+        #ligne_fichier_resultat.append("Chauffage(kWh?")
+    for item in tree.xpath("/Projet/Batiment/Zone/Logement/Etat/Conso/ECS"):
+        ligne_fichier_resultat.append(item.findtext("Total_EP"))
+        #ligne_fichier_resultat.append("ECS(kWh?")
+    for Resume_DPE in tree.xpath("/Projet/Batiment/Zone/Logement/Etat/Resume_DPE"):
         ligne_fichier_resultat.append(Resume_DPE.findtext("Lettre_ges"))
         ligne_fichier_resultat.append(Resume_DPE.findtext("Valeur_ges"))
-        ligne_fichier_resultat.append(Resume_DPE.findtext("energie renouvellable?"))
+    for item in tree.xpath("/Projet/Batiment/Zone/Logement/Etat/Conso/ENR_Collection/ENR"):
+        ligne_fichier_resultat.append(item.findtext("Total_EP"))
+        #ligne_fichier_resultat.append(Resume_DPE.findtext("energie renouvellable?"))
 
     for Logement in tree.xpath("/Projet/Batiment/Zone/Logement"):
         ligne_fichier_resultat.append(Logement.findtext("Shab"))
@@ -118,8 +125,13 @@ def generateOneCsvLineFromOneXML(nameOfFile):
         ligne_fichier_resultat.append(Generalites_DPE.findtext("Adresse"))
         ligne_fichier_resultat.append(Generalites_DPE.findtext("Code_postal"))
         ligne_fichier_resultat.append(Generalites_DPE.findtext("Localite"))
-        ligne_fichier_resultat.append(Generalites_DPE.findtext("nombre?"))
-        ligne_fichier_resultat.append(Generalites_DPE.findtext("surface habitable?"))
+    for Logement in tree.xpath("/Projet/Batiment/Zone/Logement"):
+        ligne_fichier_resultat.append(Logement.findtext("Nbr_logement"))
+#        ligne_fichier_resultat.append(Generalites_DPE.findtext("nombre?"))
+    for Logement in tree.xpath("/Projet/Batiment/Zone/Logement"):
+        ligne_fichier_resultat.append(Logement.findtext("Shab"))
+        #ligne_fichier_resultat.append(Generalites_DPE.findtext("surface habitable?"))
+    for Generalites_DPE in tree.xpath("/Projet/Generalites_DPE"):
         ligne_fichier_resultat.append(Generalites_DPE.findtext("Annee_construction"))
 
     print(ligne_fichier_resultat)
@@ -133,11 +145,13 @@ def generateOneCsvLineFromOneXML(nameOfFile):
     nbMur=0
     for mur in tree.xpath("/Projet/Batiment/Zone/Logement/Etat/Enveloppe/detail_murs/Mur"):
         #pour chaque mur on ajoute les collones d'entete
-        entete_fichier_resultat.extend([ str("Type "+mur.findtext("Id")), 'Superficie(m2)', 'isolation'])
+        #entete_fichier_resultat.extend([ str("Type "+mur.findtext("Id")), 'Superficie(m2)', 'isolation'])
+        entete_fichier_resultat.extend([str("Type " + mur.findtext("Id")), 'localisation', 'Superficie(m2)'])
         ligne_fichier_resultat.append(mur.findtext("Descriptif_court"))
+        ligne_fichier_resultat.append(mur.findtext("Localisation"))
         surface_totale=mur.findtext("Surface_totale")
         ligne_fichier_resultat.append(surface_totale)
-        ligne_fichier_resultat.append(mur.findtext("Surface_isolee"))
+        #ligne_fichier_resultat.append(mur.findtext("Surface_isolee"))
         #remplacement des virgules pour passer des .
         surface_totale= surface_totale.replace(',', '.')
         somme_surface_totale+=float(surface_totale)
@@ -197,10 +211,10 @@ def generateOneCsvLineFromOneXML(nameOfFile):
         print str(surface)
         print mapFenetreCodeDescriptif[code]
         print mapFenetreCodeDesignation[code]
-        entete_fichier_resultat.extend([ str("Type "+code), 'Superficie(m2)', 'description'])
+        entete_fichier_resultat.extend([ str("Type "+code),'description', 'Superficie(m2)' ])
         ligne_fichier_resultat.append(mapFenetreCodeDesignation[code])
-        ligne_fichier_resultat.append(str(surface))
         ligne_fichier_resultat.append(mapFenetreCodeDescriptif[code])
+        ligne_fichier_resultat.append(str(surface))
         nbMenuiserie=nbMenuiserie+1
 
     #on complete la ligne avec des blancs pour se recaler avec les autres fichiers
@@ -225,8 +239,8 @@ def generateOneCsvLineFromOneXML(nameOfFile):
 
     #remplissage du bloc orange: Toiture
     #pas trouve dans l'XML???
-    entete_fichier_resultat.extend([ 'Type 1', 'Superficie(m2)', 'Lame d\'air'])
-    ligne_fichier_resultat.extend([' ', ' ', ' '])
+    #entete_fichier_resultat.extend([ 'Type 1', 'Superficie(m2)', 'Lame d\'air'])
+    #ligne_fichier_resultat.extend([' ', ' ', ' '])
 
 
 
