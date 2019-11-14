@@ -24,21 +24,30 @@ def calculTailleColonneMax(nameofPath):
         nbMur = 0
         nbMenuiserie = 0
         nbPlancher = 0
+        mapFenetreSurface = {}
         print(entry)
+        #entry="4928L-B_resultat_01_01_01_000.xml"
         tree = etree.parse(str("fichier_xml/" + entry))
         for mur in tree.xpath("/Projet/Batiment/Zone/Logement/Etat/Enveloppe/detail_murs/Mur"):
             nbMur=nbMur+1
 
         for vitrage in tree.xpath("/Projet/Batiment/Zone/Logement/Etat/Enveloppe/detail_vitr/Vitrage"):
             #pour le vitrage c'est plus compliqué, il faut regrouper par type de vitrage
-            mapFenetreSurface = {}
-            if vitrage.findtext("Code") in mapFenetreSurface:
+
+            print vitrage.findtext("Descriptif_court")
+
+            #modification, regroupement par description_courte car on peut avoir une commune pour 2 type de fenetres
+            if vitrage.findtext("Descriptif_court") in mapFenetreSurface:
                 item = mapFenetreSurface.get(vitrage.findtext("Code"))
                 # update valeur
             else:
                 # on ajoute la case
-                mapFenetreSurface[vitrage.findtext("Code")] = vitrage.findtext("Surface_totale").replace(',', '.')
+                mapFenetreSurface[vitrage.findtext("Descriptif_court")] = vitrage.findtext("Surface_totale").replace(',', '.')
+
                 nbMenuiserie = nbMenuiserie + 1
+                #print "connait pas "
+                #print(len(mapFenetreSurface))
+                #print mapFenetreSurface
 
             for code, surface in mapFenetreSurface.items():
                 nbMenuiserie = nbMenuiserie
@@ -188,32 +197,33 @@ def generateOneCsvLineFromOneXML(nameOfFile):
     nbMenuiserie=0
     #### DEBUG pour faire somme par taille de fenetre
     for vitrage in tree.xpath("/Projet/Batiment/Zone/Logement/Etat/Enveloppe/detail_vitr/Vitrage"):
-        #pour chaque mur on ajoute les collones d'entete
+        #pour chaque fenetre on ajoute les colones d'entete
         ligne=vitrage.findtext("Id") + "   " + vitrage.findtext("Code") + "   " + vitrage.findtext("Designation")+ "   " + vitrage.findtext("Surface_totale") + "   "+ vitrage.findtext("Descriptif")
         ligne=ligne.replace('\n',' ')
         ligne=ligne.encode('UTF-8')
         print ligne
+
         #on ajoute la surface de la fenetre a la somme globale (peu importe le type de fenetre
         somme_surface_totale_vitrage += float(vitrage.findtext("Surface_totale").replace(',', '.'))
-        if vitrage.findtext("Code")  in mapFenetreSurface:
-            item=mapFenetreSurface.get(vitrage.findtext("Code"))
+        if vitrage.findtext("Descriptif_court")  in mapFenetreSurface:
+            item=mapFenetreSurface.get(vitrage.findtext("Descriptif_court"))
             sommeSurface= float(item) + float(vitrage.findtext("Surface_totale").replace(',', '.'))
-            mapFenetreSurface[vitrage.findtext("Code")] =sommeSurface
+            mapFenetreSurface[vitrage.findtext("Descriptif_court")] =sommeSurface
             #update valeur
         else:
             #on ajoute la case
-            mapFenetreSurface[vitrage.findtext("Code")]=vitrage.findtext("Surface_totale").replace(',', '.')
-            mapFenetreCodeDescriptif[vitrage.findtext("Code")]=vitrage.findtext("Descriptif").replace('\n',' ')
-            mapFenetreCodeDesignation[vitrage.findtext("Code")]=vitrage.findtext("Designation").replace('\n',' ')
+            mapFenetreSurface[vitrage.findtext("Descriptif_court")]=vitrage.findtext("Surface_totale").replace(',', '.')
+            mapFenetreCodeDescriptif[vitrage.findtext("Descriptif_court")]=vitrage.findtext("Descriptif").replace('\n',' ')
+            mapFenetreCodeDesignation[vitrage.findtext("Descriptif_court")]=vitrage.findtext("Designation").replace('\n',' ')
 
-    for code, surface in mapFenetreSurface.items():
-        print  code
+    for descriptif_court, surface in mapFenetreSurface.items():
+        print  descriptif_court
         print str(surface)
-        print mapFenetreCodeDescriptif[code]
-        print mapFenetreCodeDesignation[code]
-        entete_fichier_resultat.extend([ str("Type "+code),'description', 'Superficie(m2)' ])
-        ligne_fichier_resultat.append(mapFenetreCodeDesignation[code])
-        ligne_fichier_resultat.append(mapFenetreCodeDescriptif[code])
+        print mapFenetreCodeDescriptif[descriptif_court]
+        print mapFenetreCodeDesignation[descriptif_court]
+        entete_fichier_resultat.extend([ str("Type "+descriptif_court),'description', 'Superficie(m2)' ])
+        ligne_fichier_resultat.append(mapFenetreCodeDesignation[descriptif_court])
+        ligne_fichier_resultat.append(mapFenetreCodeDescriptif[descriptif_court])
         ligne_fichier_resultat.append(str(surface))
         nbMenuiserie=nbMenuiserie+1
 
