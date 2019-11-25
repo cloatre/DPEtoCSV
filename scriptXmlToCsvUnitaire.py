@@ -1,4 +1,4 @@
-# coding: utf-8
+# coding=utf-8
 
 from lxml import etree
 import os
@@ -186,7 +186,6 @@ def generateOneCsvLineFromOneXML(nameOfFile):
     #potentielle liste de 1 à N fenetres
     ######################################################################################################################
 
-
     #dans mapFenetreSurface, on a le code et la somme des surface (F02, 10.35m2) par exemple
     #dans mapFenetreCodeDescriptif, on a le code et le descriptif detaillé
     #dans mapFenetreCodeDesignation, on a le code et la designation
@@ -221,7 +220,8 @@ def generateOneCsvLineFromOneXML(nameOfFile):
         print str(surface)
         print mapFenetreCodeDescriptif[descriptif_court]
         print mapFenetreCodeDesignation[descriptif_court]
-        entete_fichier_resultat.extend([ str("Type "+descriptif_court),'description', 'Superficie(m2)' ])
+        #entete_fichier_resultat.extend([ str("Type "+descriptif_court),'description', 'Superficie(m2)' ])
+        entete_fichier_resultat.extend(["Type " + descriptif_court, 'description', 'Superficie(m2)'])
         ligne_fichier_resultat.append(mapFenetreCodeDesignation[descriptif_court])
         ligne_fichier_resultat.append(mapFenetreCodeDescriptif[descriptif_court])
         ligne_fichier_resultat.append(str(surface))
@@ -381,18 +381,29 @@ def generateOneCsvLineFromOneXML(nameOfFile):
         writer = csv.writer(f, dialect='excel')
         ligne = ''
         for i in entete_fichier_resultat:
-            ligne+=i + " |"
+            if isinstance(i, unicode):
+                #print i
+                test = i.encode("utf-8")
+                ligne += test + " |"
+            else:
+                ligne+=i + " |"
         writer.writerow([ligne, ])
         ligne = ''
         for i in ligne_fichier_resultat:
             print i
             if i != None:
-                ligne+=i + " |"
+                if isinstance(i, unicode):
+                    #print i
+                    test = i.encode("utf-8")
+                    ligne += test + " |"
+                else:
+                    ligne += i + " |"
+               #          ligne+=i + " |"
             else:
                 ligne += "  |"
         #ligne pour supprimer les eventuels retour charriot issus de l'xml
         ligne=ligne.replace('\n',' ')
-        ligne=ligne.encode('UTF-8')
+        #ligne=ligne.encode("utf-8")
         writer.writerow([ligne, ])
 
     nomFichierOutput=datetime.datetime.today().strftime('%Y-%m-%d') + '/' + nameOfFile+"_OUTPUT.csv"
@@ -400,18 +411,30 @@ def generateOneCsvLineFromOneXML(nameOfFile):
         writer = csv.writer(f, dialect='excel')
         ligne = ''
         for i in entete_fichier_resultat:
-            ligne+=i + " ;"
+            if isinstance(i, unicode):
+                #print i
+                test = i.encode("utf-8")
+                ligne += test + " ;"
+            else:
+                ligne+=i + " ;"
+            #ligne+=i + " ;"
         writer.writerow([ligne, ])
         ligne = ''
         for i in ligne_fichier_resultat:
             print i
             if i != None:
-                ligne+=i + " ;"
+                if isinstance(i, unicode):
+                    #print i
+                    test = i.encode("utf-8")
+                    ligne += test + " ;"
+                else:
+                    ligne += i + " ;"
+                # ligne+=i + " ;"
             else:
                 ligne += "  ;"
         #ligne pour supprimer les eventuels retour charriot issus de l'xml
         ligne=ligne.replace('\n',' ')
-        ligne=ligne.encode('UTF-8')
+        #ligne=ligne.encode('UTF-8')
         writer.writerow([ligne, ])
 
     ########DEBUG
@@ -433,7 +456,13 @@ def generateOneCsvLineFromOneXML(nameOfFile):
             writerGlobal = csv.writer(fileMerged, dialect='excel')
             ligne = ''
             for i in entete_fichier_resultat:
-                ligne += i + " ;"
+                if isinstance(i, unicode):
+                    #print i
+                    test = i.encode("utf-8")
+                    ligne += test + " ;"
+                else:
+                    ligne += i + " ;"
+                #ligne += i + " ;"
             writerGlobal.writerow([ligne, ])
             ligne = ''
             for i in ligne_fichier_resultat:
@@ -453,7 +482,13 @@ def generateOneCsvLineFromOneXML(nameOfFile):
 
             ligne = ''
             for i in entete_fichier_resultat:
-                ligne += i + " ;"
+                if isinstance(i, unicode):
+                    #print i
+                    test = i.encode("utf-8")
+                    ligne += test + " ;"
+                else:
+                    ligne += i + " ;"
+                #ligne += i + " ;"
             writerGlobal.writerow([ligne, ])
 
             #dans ce cas on n'ecrit pas l'entete
@@ -461,12 +496,18 @@ def generateOneCsvLineFromOneXML(nameOfFile):
             for i in ligne_fichier_resultat:
                 print i
                 if i != None:
-                    ligne += i + " ;"
+                    if isinstance(i, unicode):
+                        #print i
+                        test = i.encode("utf-8")
+                        ligne += test + " ;"
+                    else:
+                        ligne += i + " ;"
+                    # ligne+=i + " ;"
                 else:
                     ligne += "  ;"
             # ligne pour supprimer les eventuels retour charriot issus de l'xml
             ligne = ligne.replace('\n', ' ')
-            ligne = ligne.encode('UTF-8')
+            #ligne = ligne.encode('UTF-8')
             writerGlobal.writerow([ligne, ])
 
 
