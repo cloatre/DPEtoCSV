@@ -116,29 +116,40 @@ def generateOneCsvLineFromOneXML(nameOfFile):
             # Nord/Sud/Est/Ouest
             ####
             sommeOrientation=0.0
-            for orientation in tree.xpath("/Projet/Batiment/Zone/Logement/Etat/Enveloppe/detail_vitr/Vitrage/Sud"):
-                sommeOrientation += float(orientation.findtext("Surface").replace(',', '.'))
-            for orientation in tree.xpath("/Projet/Batiment/Zone/Logement/Etat/Enveloppe/detail_vitr/Vitrage/Nord"):
-                sommeOrientation += float(orientation.findtext("Surface").replace(',', '.'))
-            for orientation in tree.xpath("/Projet/Batiment/Zone/Logement/Etat/Enveloppe/detail_vitr/Vitrage/Est"):
-                sommeOrientation += float(orientation.findtext("Surface").replace(',', '.'))
-            for orientation in tree.xpath("/Projet/Batiment/Zone/Logement/Etat/Enveloppe/detail_vitr/Vitrage/Ouest"):
-                sommeOrientation += float(orientation.findtext("Surface").replace(',', '.'))
+
+            if vitrage.find("Sud"):
+                sommeOrientation += float(vitrage.find("Sud").findtext("Surface").replace(',', '.'))
+                #print 'Sud: +=' + str(sommeOrientation)
+            if vitrage.find("Nord"):
+                sommeOrientation += float(vitrage.find("Nord").findtext("Surface").replace(',', '.'))
+                #print 'Nord: +=' + str(sommeOrientation)
+            if vitrage.find("Est"):
+                sommeOrientation += float(vitrage.find("Est").findtext("Surface").replace(',', '.'))
+                #print 'Est: +=' + str(sommeOrientation)
+            if vitrage.find("Ouest"):
+                sommeOrientation += float(vitrage.find("Ouest").findtext("Surface").replace(',', '.'))
+                #print 'Ouest: +=' + str(sommeOrientation)
+
 
             ligne=ligne.replace('\n',' ')
             ligne=ligne.encode('UTF-8')
             #print ligne
+
+            #print 'debug sommeOrientation'
+            #print sommeOrientation
 
             #on ajoute la surface de la fenetre a la somme globale (peu importe le type de fenetre
             somme_surface_totale_vitrage += float(sommeOrientation)
             if vitrage.findtext("Descriptif_court")  in mapFenetreSurface:
                 item=mapFenetreSurface.get(vitrage.findtext("Descriptif_court"))
                 sommeSurface= float(item) + float(sommeOrientation)
+                #print vitrage.findtext("Descriptif_court")
+                #print 'ancien:'+str(item)+ ' + ' + str(sommeOrientation) + ' = ' + str(sommeSurface)
                 mapFenetreSurface[vitrage.findtext("Descriptif_court")] =sommeSurface
                 #update valeur
             else:
                 #on ajoute la case
-                mapFenetreSurface[vitrage.findtext("Descriptif_court")]=vitrage.findtext("Surface_totale").replace(',', '.')
+                mapFenetreSurface[vitrage.findtext("Descriptif_court")]=sommeOrientation
                 mapFenetreCodeDescriptif[vitrage.findtext("Descriptif_court")]=vitrage.findtext("Descriptif").replace('\n',' ')
                 mapFenetreCodeDesignation[vitrage.findtext("Descriptif_court")]=vitrage.findtext("Designation").replace('\n',' ')
         else:
@@ -146,7 +157,7 @@ def generateOneCsvLineFromOneXML(nameOfFile):
             ligne = vitrage.findtext("Id") + "   " + vitrage.findtext("Code") + "   " + vitrage.findtext("Designation") + "   " + "0.0" + "   " + vitrage.findtext("Descriptif")
             ligne = ligne.replace('\n', ' ')
             ligne = ligne.encode('UTF-8')
-            print ligne
+            #print ligne
 
             # on ajoute la surface de la fenetre a la somme globale (peu importe le type de fenetre
             somme_surface_totale_vitrage += float(0)
@@ -162,10 +173,10 @@ def generateOneCsvLineFromOneXML(nameOfFile):
                 mapFenetreCodeDesignation[vitrage.findtext("Descriptif_court")] = vitrage.findtext("Designation").replace('\n', ' ')
 
     for descriptif_court, surface in mapFenetreSurface.items():
-        print  descriptif_court
-        print str(surface)
-        print mapFenetreCodeDescriptif[descriptif_court]
-        print mapFenetreCodeDesignation[descriptif_court]
+        #print  descriptif_court
+        #print str(surface)
+        #print mapFenetreCodeDescriptif[descriptif_court]
+        #print mapFenetreCodeDesignation[descriptif_court]
         #entete_fichier_resultat.extend([ str("Type "+descriptif_court),'description', 'Superficie(m2)' ])
         entete_fichier_resultat.extend(["Type " + descriptif_court, 'description', 'Superficie(m2)'])
         ligne_fichier_resultat.append(mapFenetreCodeDesignation[descriptif_court])
@@ -200,7 +211,7 @@ def generateOneCsvLineFromOneXML(nameOfFile):
         writer.writerow([ligne, ])
         ligne = ''
         for i in ligne_fichier_resultat:
-            print i
+            #print i
             if i != None:
                 if isinstance(i, unicode):
                     #print i
@@ -231,7 +242,7 @@ def generateOneCsvLineFromOneXML(nameOfFile):
         writer.writerow([ligne, ])
         ligne = ''
         for i in ligne_fichier_resultat:
-            print i
+            #print i
             if i != None:
                 if isinstance(i, unicode):
                     #print i
@@ -247,15 +258,6 @@ def generateOneCsvLineFromOneXML(nameOfFile):
         #ligne=ligne.encode('UTF-8')
         writer.writerow([ligne, ])
 
-    ########DEBUG
-    print("DEBUG LCLLLLLLLLLLL")
-    print entete_fichier_resultat
-    print ligne_fichier_resultat
-    for i in ligne_fichier_resultat:
-        print i
-        #print str(i).encode('UTF-8')
-
-    #exit(0)
 
     #ICI on ecrit le fichier mergé, la premiere occurence on ecrit l'entete
     nomFichierOutputGlobal = datetime.datetime.today().strftime('%Y-%m-%d') + '/' + "globalFichierMerge_FenetreUniquement.csv"
@@ -276,7 +278,7 @@ def generateOneCsvLineFromOneXML(nameOfFile):
             writerGlobal.writerow([ligne, ])
             ligne = ''
             for i in ligne_fichier_resultat:
-                print i
+                #print i
                 if i != None:
                     ligne += i + " ;"
                 else:
@@ -304,7 +306,7 @@ def generateOneCsvLineFromOneXML(nameOfFile):
             #dans ce cas on n'ecrit pas l'entete
             ligne = ''
             for i in ligne_fichier_resultat:
-                print i
+                #print i
                 if i != None:
                     if isinstance(i, unicode):
                         #print i
