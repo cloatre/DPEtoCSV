@@ -86,7 +86,7 @@ def generateOneCsvLineFromOneXML(nameOfFile):
         writer.writerow([ligne, ])
         ligne = ''
         for i in ligne_fichier_resultat:
-            print i
+            #print i
             if i != None:
                 if isinstance(i, unicode):
                     #print i
@@ -117,7 +117,7 @@ def generateOneCsvLineFromOneXML(nameOfFile):
         writer.writerow([ligne, ])
         ligne = ''
         for i in ligne_fichier_resultat:
-            print i
+            #print i
             if i != None:
                 if isinstance(i, unicode):
                     #print i
@@ -133,15 +133,7 @@ def generateOneCsvLineFromOneXML(nameOfFile):
         #ligne=ligne.encode('UTF-8')
         writer.writerow([ligne, ])
 
-    ########DEBUG
-    print("DEBUG LCLLLLLLLLLLL")
-    print entete_fichier_resultat
-    print ligne_fichier_resultat
-    for i in ligne_fichier_resultat:
-        print i
-        #print str(i).encode('UTF-8')
 
-    #exit(0)
 
     #ICI on ecrit le fichier mergé, la premiere occurence on ecrit l'entete
     nomFichierOutputGlobal = datetime.datetime.today().strftime('%Y-%m-%d') + '/' + "globalFichierMerge_plafondUniquement.csv"
@@ -162,7 +154,7 @@ def generateOneCsvLineFromOneXML(nameOfFile):
             writerGlobal.writerow([ligne, ])
             ligne = ''
             for i in ligne_fichier_resultat:
-                print i
+               #print i
                 if i != None:
                     ligne += i + " ;"
                 else:
@@ -190,7 +182,7 @@ def generateOneCsvLineFromOneXML(nameOfFile):
             #dans ce cas on n'ecrit pas l'entete
             ligne = ''
             for i in ligne_fichier_resultat:
-                print i
+                #print i
                 if i != None:
                     if isinstance(i, unicode):
                         #print i
